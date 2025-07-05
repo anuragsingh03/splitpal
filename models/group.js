@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class AppUser extends Model {
+  class Group extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,24 +13,23 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  AppUser.associate = (models) => {
-  AppUser.hasMany(models.Group, { foreignKey: 'createdBy', as: 'createdGroups' });
-  AppUser.belongsToMany(models.Group, {
+  Group.associate = (models) => {
+  Group.belongsTo(models.AppUser, { foreignKey: 'createdBy', as: 'creator' });
+  Group.belongsToMany(models.AppUser, {
     through: models.GroupMember,
-    foreignKey: 'userId',
-    otherKey: 'groupId',
-    as: 'groups'
+    foreignKey: 'groupId',
+    otherKey: 'userId',
+    as: 'members'
   });
 };
 
-  AppUser.init({
+  Group.init({
     name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    phone: DataTypes.STRING
+    code: DataTypes.STRING,
+    createdBy: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'AppUser',
+    modelName: 'Group',
   });
-  return AppUser;
+  return Group;
 };
